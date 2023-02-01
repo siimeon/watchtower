@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  title: Watchtower - Object tracking service
+  description: |-
+    This is api documentation for Watchtower service.
+    Service can be deployed with to AWS and it uses AWS Api Gateway and Lambda
+  version: 0.0.1
+tags:
+  - name: track
+    description: Tracking api
+paths:
+  /trace:
+    post:
+      summary: Send new tracking event
+      description: Send new tracking event from external service or integration
+      tags:
+        - track
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trace'
+      responses:
+        '201':    # status code
+          description: Returns tracking event id 
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/SuccessfulStatusResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/StatusResponse'
+  /object/{objectId}:
+    get:
+      summary: Get objects statuses
+      description: Get objects statuses with given object id
+      tags:
+        - track
+      parameters:
+        - in: path
+          name: objectId
+          description: Id of an object
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns object with list of object statuses
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OjectStatusesResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedResponse'
+        '500':
+          description: Internal error
+          content:
+            aplication/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+components:
+  schemas:
+    Trace:
+      properties:
+        objectId:
+          type: string
+        systemName:
+          type: string
+        dataType:
+          type: string
+        eventType:
+          type: string
+          enum: [add, update, delete]
+        externalId:
+          type: string
+        description:
+          type: string
+    OjectStatusesResponse:
+      properties:
+        objectId:
+          type: string
+        statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ObjectStatus'
+    ObjectStatus:
+      properties:
+        objectId:
+          type: string
+        systemName:
+          type: string
+        dataType:
+          type: string
+        deleted:
+          type: boolean
+        externalId:
+          type: string
+        description:
+          type: string
+        updatedAt:
+          type: integer
+    UnauthorizedResponse:
+      properties:
+        message:
+          type: string
+    StatusResponse:
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+        message:
+          type: string
+    SuccessfulStatusResponse:
+      allOf:
+        - $ref: '#/components/schemas/StatusResponse'
+        - type: object
+          properties:
+            traceEventId:
+              type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
