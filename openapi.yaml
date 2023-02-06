@@ -12,7 +12,9 @@ paths:
   /trace:
     post:
       summary: Send new tracking event
-      description: Send new tracking event from external service or integration
+      description: |-
+        Send new tracking event from external service or integration.
+        
       tags:
         - track
       security:
@@ -60,7 +62,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OjectStatusesResponse'
+                $ref: '#/components/schemas/ObjectStatusesResponse'
         '401':
           description: Unauthorized
           content:
@@ -78,21 +80,28 @@ components:
     Trace:
       properties:
         objectId:
+          description: Id of an object and uniq identifier for the object
           type: string
         systemName:
+          description: Name of the system that sends the event. Backend will transform it to lowercase.
           type: string
         dataType:
+          description: Type of the data that is sent. Backend will transform it to lowercase.
           type: string
         eventType:
+          description: Type of the event
           type: string
           enum: [add, update, delete]
         externalId:
+          description: External id of the object in external system
           type: string
         description:
+          description: Optional description of an trace event
           type: string
-    OjectStatusesResponse:
+    ObjectStatusesResponse:
       properties:
         objectId:
+          description: Id of an object and uniq identifier for the object
           type: string
         statuses:
           type: array
@@ -101,16 +110,19 @@ components:
     ObjectStatus:
       properties:
         objectId:
+          description: Id of an object and uniq identifier for the object
           type: string
         systemName:
+          description: Name of the system in lowercase
           type: string
         dataType:
+          description: Type of the data in lowercase
           type: string
         deleted:
+          description: Flag that indicates if object is deleted in system
           type: boolean
         externalId:
-          type: string
-        description:
+          description: External id of the object in system
           type: string
         updatedAt:
           type: integer
