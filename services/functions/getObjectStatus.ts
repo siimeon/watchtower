@@ -9,7 +9,6 @@ const mapResponse = (traceRecords: WatchtowerObjectStatusRecord[]) => {
       dataType: traceRecord.dataType,
       deleted: traceRecord.deleted,
       externalId: traceRecord.externalId,
-      description: traceRecord.description,
       updatedAt: traceRecord.eventTime,
     };
   });
